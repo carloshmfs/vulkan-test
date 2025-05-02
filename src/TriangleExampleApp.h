@@ -19,6 +19,9 @@ private:
     VkInstance m_vk_instance;
     void create_instance();
 
+    VkPhysicalDevice m_physical_device = VK_NULL_HANDLE;
+    void pick_physical_device();
+
     void init_window();
     void init_vulkan();
     void main_loop();

@@ -29,6 +29,7 @@ void TriangleExampleApp::init_window()
 void TriangleExampleApp::init_vulkan()
 {
     create_instance();
+    pick_physical_device();
 }
 
 void TriangleExampleApp::create_instance()
@@ -68,6 +69,39 @@ void TriangleExampleApp::create_instance()
 
     for (const auto& extension : extensions) {
         std::cout << '\t' << extension.extensionName << std::endl;
+    }
+}
+
+static bool is_device_suitable(VkPhysicalDevice device)
+{
+    VkPhysicalDeviceProperties device_properties;
+    VkPhysicalDeviceFeatures device_features;
+    vkGetPhysicalDeviceProperties(device, &device_properties);
+    vkGetPhysicalDeviceFeatures(device, &device_features);
+
+    return device_properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU && device_features.geometryShader;
+}
+
+void TriangleExampleApp::pick_physical_device()
+{
+    uint32_t device_count = 0;
+    vkEnumeratePhysicalDevices(m_vk_instance, &device_count, nullptr);
+    if (device_count == 0) {
+        std::cerr << device_count << std::endl;
+        throw std::runtime_error("failed to find GPUs with Vulkan support!");
+    }
+
+    std::vector<VkPhysicalDevice> devices(device_count);
+    vkEnumeratePhysicalDevices(m_vk_instance, &device_count, devices.data());
+
+    for (const auto& device : devices) {
+        if (is_device_suitable(device)) {
+            m_physical_device = device;
+        }
+    }
+
+    if (m_physical_device == VK_NULL_HANDLE) {
+        throw std::runtime_error("failed to find a suitable GPU!");
     }
 }
 
