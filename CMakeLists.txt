@@ -10,4 +10,11 @@ add_executable(
     src/main.cpp
 )
 
-# target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC libzip::zip)
+find_package(glm REQUIRED)
+target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC glm::glm)
+
+find_package(glfw3 3.4 REQUIRED)
+target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC glfw)
+
+find_package(Vulkan REQUIRED)
+target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC Vulkan::Vulkan)
