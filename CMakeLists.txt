@@ -7,6 +7,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_executable(
     ${CMAKE_PROJECT_NAME} 
+    src/TriangleExampleApp.cpp
     src/main.cpp
 )
 
