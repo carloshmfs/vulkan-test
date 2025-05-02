@@ -12,8 +12,8 @@ public:
     void run();
 
 private:
-    const uint32_t m_WIDTH = 800;
-    const uint32_t m_HEIGHT = 600;
+    static constexpr uint32_t m_WIDTH = 800;
+    static constexpr uint32_t m_HEIGHT = 600;
     GLFWwindow* m_window;
 
     VkInstance m_vk_instance;
