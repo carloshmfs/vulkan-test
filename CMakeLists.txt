@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.26.3)
 project(vulkant-test VERSION 1.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_FLAGS -fdiagnostics-color=always)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_executable(
@@ -19,3 +20,8 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC glfw)
 
 find_package(Vulkan REQUIRED)
 target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC Vulkan::Vulkan)
+
+target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX>
+  $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
+)
