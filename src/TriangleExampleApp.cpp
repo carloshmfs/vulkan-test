@@ -96,6 +96,8 @@ void TriangleExampleApp::create_logical_device()
     if (vkCreateDevice(m_physical_device, &create_info, nullptr, &m_device) != VK_SUCCESS) {
         throw std::runtime_error("failed to create logical device!");
     }
+
+    vkGetDeviceQueue(m_device, indices.graphics_family.value(), 0, &m_graphics_queue);
 }
 
 void TriangleExampleApp::pick_physical_device()

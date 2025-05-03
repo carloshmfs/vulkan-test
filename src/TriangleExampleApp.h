@@ -32,6 +32,8 @@ private:
     VkDevice m_device;
     void create_logical_device();
 
+    VkQueue m_graphics_queue;
+
     int rate_device_suitability(VkPhysicalDevice device) const;
     QueueFamilyIndices find_queue_families(VkPhysicalDevice device) const;
 
