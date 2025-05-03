@@ -22,6 +22,8 @@ private:
     VkPhysicalDevice m_physical_device = VK_NULL_HANDLE;
     void pick_physical_device();
 
+    int rate_device_suitability(VkPhysicalDevice device) const;
+
     void init_window();
     void init_vulkan();
     void main_loop();

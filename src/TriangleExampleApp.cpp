@@ -7,6 +7,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <map>
 #include <stdexcept>
 #include <vector>
 
@@ -72,16 +73,6 @@ void TriangleExampleApp::create_instance()
     }
 }
 
-static bool is_device_suitable(VkPhysicalDevice device)
-{
-    VkPhysicalDeviceProperties device_properties;
-    VkPhysicalDeviceFeatures device_features;
-    vkGetPhysicalDeviceProperties(device, &device_properties);
-    vkGetPhysicalDeviceFeatures(device, &device_features);
-
-    return device_properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU && device_features.geometryShader;
-}
-
 void TriangleExampleApp::pick_physical_device()
 {
     uint32_t device_count = 0;
@@ -94,15 +85,43 @@ void TriangleExampleApp::pick_physical_device()
     std::vector<VkPhysicalDevice> devices(device_count);
     vkEnumeratePhysicalDevices(m_vk_instance, &device_count, devices.data());
 
+    std::multimap<int, VkPhysicalDevice> candidates;
     for (const auto& device : devices) {
-        if (is_device_suitable(device)) {
-            m_physical_device = device;
-        }
+        int score = rate_device_suitability(device);
+        candidates.insert(std::make_pair(score, device));
     }
 
-    if (m_physical_device == VK_NULL_HANDLE) {
+    if (candidates.rbegin()->first > 0) {
+        m_physical_device = candidates.rbegin()->second;
+    } else {
         throw std::runtime_error("failed to find a suitable GPU!");
     }
+}
+
+int TriangleExampleApp::rate_device_suitability(VkPhysicalDevice device) const
+{
+    VkPhysicalDeviceProperties device_properties;
+    VkPhysicalDeviceFeatures device_features;
+    vkGetPhysicalDeviceProperties(device, &device_properties);
+    vkGetPhysicalDeviceFeatures(device, &device_features);
+    int score = 0;
+
+    std::cout << "rating device: " << device_properties.deviceName << std::endl;
+
+    // Discrete GPUs have a significant performance advantage
+    if (device_properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
+        score += 1000;
+    }
+
+    // Maximum possible size of textures affects graphics quality
+    score += device_properties.limits.maxImageDimension2D;
+
+    // Application can't function without geometry shaders
+    if (!device_features.geometryShader) {
+        return 0;
+    }
+
+    return score;
 }
 
 void TriangleExampleApp::main_loop()
