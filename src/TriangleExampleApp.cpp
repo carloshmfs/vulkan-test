@@ -43,21 +43,21 @@ void TriangleExampleApp::create_instance()
     appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
     appInfo.apiVersion = VK_API_VERSION_1_0;
 
-    VkInstanceCreateInfo createInfo {};
-    createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-    createInfo.pApplicationInfo = &appInfo;
+    VkInstanceCreateInfo create_info {};
+    create_info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+    create_info.pApplicationInfo = &appInfo;
 
     uint32_t glfwExtensionCount = 0;
     const char** glfwExtensions;
 
     glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
 
-    createInfo.enabledExtensionCount = glfwExtensionCount;
-    createInfo.ppEnabledExtensionNames = glfwExtensions;
+    create_info.enabledExtensionCount = glfwExtensionCount;
+    create_info.ppEnabledExtensionNames = glfwExtensions;
 
-    VkResult result = vkCreateInstance(&createInfo, nullptr, &m_vk_instance);
+    VkResult result = vkCreateInstance(&create_info, nullptr, &m_vk_instance);
     (void)result;
-    if (vkCreateInstance(&createInfo, nullptr, &m_vk_instance) != VK_SUCCESS) {
+    if (vkCreateInstance(&create_info, nullptr, &m_vk_instance) != VK_SUCCESS) {
         throw std::runtime_error("failed to create vk instance!");
     }
 
@@ -70,6 +70,31 @@ void TriangleExampleApp::create_instance()
 
     for (const auto& extension : extensions) {
         std::cout << '\t' << extension.extensionName << std::endl;
+    }
+}
+
+void TriangleExampleApp::create_logical_device()
+{
+    QueueFamilyIndices indices = find_queue_families(m_physical_device);
+    VkDeviceQueueCreateInfo queue_create_info {};
+    VkPhysicalDeviceFeatures device_features {};
+    VkDeviceCreateInfo create_info {};
+
+    queue_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+    queue_create_info.queueFamilyIndex = indices.graphics_family.value();
+    queue_create_info.queueCount = 1;
+
+    float queuePriority = 1.0f;
+    queue_create_info.pQueuePriorities = &queuePriority;
+
+    create_info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+    create_info.pQueueCreateInfos = &queue_create_info;
+    create_info.queueCreateInfoCount = 1;
+
+    create_info.pEnabledFeatures = &device_features;
+
+    if (vkCreateDevice(m_physical_device, &create_info, nullptr, &m_device) != VK_SUCCESS) {
+        throw std::runtime_error("failed to create logical device!");
     }
 }
 
@@ -164,6 +189,7 @@ void TriangleExampleApp::main_loop()
 
 void TriangleExampleApp::cleanup()
 {
+    vkDestroyDevice(m_device, nullptr);
     vkDestroyInstance(m_vk_instance, nullptr);
     glfwDestroyWindow(m_window);
     glfwTerminate();

@@ -29,6 +29,9 @@ private:
     VkPhysicalDevice m_physical_device = VK_NULL_HANDLE;
     void pick_physical_device();
 
+    VkDevice m_device;
+    void create_logical_device();
+
     int rate_device_suitability(VkPhysicalDevice device) const;
     QueueFamilyIndices find_queue_families(VkPhysicalDevice device) const;
 
