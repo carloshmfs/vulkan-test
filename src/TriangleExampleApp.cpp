@@ -106,7 +106,15 @@ int TriangleExampleApp::rate_device_suitability(VkPhysicalDevice device) const
     vkGetPhysicalDeviceFeatures(device, &device_features);
     int score = 0;
 
-    std::cout << "rating device: " << device_properties.deviceName << std::endl;
+    // Application can't function without geometry shaders
+    if (!device_features.geometryShader) {
+        return 0;
+    }
+
+    QueueFamilyIndices indices = find_queue_families(device);
+    if (!indices.is_complete()) {
+        return 0;
+    }
 
     // Discrete GPUs have a significant performance advantage
     if (device_properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
@@ -116,12 +124,35 @@ int TriangleExampleApp::rate_device_suitability(VkPhysicalDevice device) const
     // Maximum possible size of textures affects graphics quality
     score += device_properties.limits.maxImageDimension2D;
 
-    // Application can't function without geometry shaders
-    if (!device_features.geometryShader) {
-        return 0;
-    }
+    std::cout << "device: " << device_properties.deviceName << " rate: " << score << std::endl;
 
     return score;
+}
+
+QueueFamilyIndices TriangleExampleApp::find_queue_families(VkPhysicalDevice device) const
+{
+    QueueFamilyIndices indices;
+    uint32_t queue_family_count = 0;
+    vkGetPhysicalDeviceQueueFamilyProperties(device, &queue_family_count, nullptr);
+
+    std::vector<VkQueueFamilyProperties> queue_families(queue_family_count);
+    vkGetPhysicalDeviceQueueFamilyProperties(device, &queue_family_count, queue_families.data());
+    std::cout << "queue families: " << queue_family_count << std::endl;
+
+    int i = 0;
+    for (const auto& queue_family : queue_families) {
+        if (queue_family.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+            indices.graphics_family = i;
+        }
+
+        if (indices.is_complete()) {
+            break;
+        }
+
+        ++i;
+    }
+
+    return indices;
 }
 
 void TriangleExampleApp::main_loop()

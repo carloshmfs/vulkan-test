@@ -6,6 +6,13 @@
 #include <vulkan/vulkan.h>
 
 #include <cstdlib>
+#include <optional>
+
+struct QueueFamilyIndices {
+    std::optional<uint32_t> graphics_family;
+
+    bool is_complete() { return graphics_family.has_value(); }
+};
 
 class TriangleExampleApp {
 public:
@@ -23,6 +30,7 @@ private:
     void pick_physical_device();
 
     int rate_device_suitability(VkPhysicalDevice device) const;
+    QueueFamilyIndices find_queue_families(VkPhysicalDevice device) const;
 
     void init_window();
     void init_vulkan();
