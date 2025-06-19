@@ -30,6 +30,7 @@ void TriangleExampleApp::init_window()
 void TriangleExampleApp::init_vulkan()
 {
     create_instance();
+    create_window_surface();
     pick_physical_device();
 }
 
@@ -70,6 +71,16 @@ void TriangleExampleApp::create_instance()
 
     for (const auto& extension : extensions) {
         std::cout << '\t' << extension.extensionName << std::endl;
+    }
+}
+
+void TriangleExampleApp::create_window_surface()
+{
+    std::cout << "TriangleExampleApp::create_window_surface()" << std::endl;
+
+    VkResult err = glfwCreateWindowSurface(m_vk_instance, m_window, nullptr, &m_surface);
+    if (err) {
+        throw std::runtime_error("failed to create a window surface!");
     }
 }
 
