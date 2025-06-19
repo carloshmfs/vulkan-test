@@ -32,6 +32,7 @@ void TriangleExampleApp::init_vulkan()
     create_instance();
     create_window_surface();
     pick_physical_device();
+    create_logical_device();
 }
 
 void TriangleExampleApp::create_instance()
@@ -203,6 +204,7 @@ void TriangleExampleApp::main_loop()
 void TriangleExampleApp::cleanup()
 {
     vkDestroyDevice(m_device, nullptr);
+    vkDestroySurfaceKHR(m_vk_instance, m_surface, nullptr);
     vkDestroyInstance(m_vk_instance, nullptr);
     glfwDestroyWindow(m_window);
     glfwTerminate();

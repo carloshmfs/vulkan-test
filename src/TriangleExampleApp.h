@@ -29,6 +29,7 @@ private:
     VkPhysicalDevice m_physical_device = VK_NULL_HANDLE;
     void pick_physical_device();
 
+    VkQueue m_graphics_queue;
     VkDevice m_device;
     void create_logical_device();
 
