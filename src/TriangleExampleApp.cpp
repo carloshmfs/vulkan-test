@@ -188,6 +188,12 @@ QueueFamilyIndices TriangleExampleApp::find_queue_families(VkPhysicalDevice devi
             break;
         }
 
+        VkBool32 present_support = false;
+        vkGetPhysicalDeviceSurfaceSupportKHR(device, i, m_surface, &present_support);
+        if (present_support) {
+            indices.present_family = i;
+        }
+
         ++i;
     }
 
