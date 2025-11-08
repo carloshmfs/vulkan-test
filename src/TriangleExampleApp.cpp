@@ -25,6 +25,9 @@ void TriangleExampleApp::init_window()
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
     m_window = glfwCreateWindow(m_WIDTH, m_HEIGHT, "Vulkan window", nullptr, nullptr);
+    if (!m_window) {
+        throw std::runtime_error("could not initiate glfw window");
+    }
 }
 
 void TriangleExampleApp::init_vulkan()
