@@ -37,6 +37,8 @@ private:
     VkSurfaceKHR m_surface;
     void create_window_surface();
 
+    VkQueue m_presentation_queue;
+
     int rate_device_suitability(VkPhysicalDevice device) const;
     QueueFamilyIndices find_queue_families(VkPhysicalDevice device) const;
 
