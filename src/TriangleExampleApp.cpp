@@ -71,16 +71,16 @@ void TriangleExampleApp::create_instance()
     std::vector<VkExtensionProperties> extensions(extensionCount);
     vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
 
-    std::cout << "available extensions:" << std::endl;
+    std::cerr << "available extensions:" << std::endl;
 
     for (const auto& extension : extensions) {
-        std::cout << '\t' << extension.extensionName << std::endl;
+        std::cerr << '\t' << extension.extensionName << std::endl;
     }
 }
 
 void TriangleExampleApp::create_window_surface()
 {
-    std::cout << "TriangleExampleApp::create_window_surface()" << std::endl;
+    std::cerr << "TriangleExampleApp::create_window_surface()" << std::endl;
 
     VkResult err = glfwCreateWindowSurface(m_vk_instance, m_window, nullptr, &m_surface);
     if (err) {
@@ -166,7 +166,7 @@ int TriangleExampleApp::rate_device_suitability(VkPhysicalDevice device) const
     // Maximum possible size of textures affects graphics quality
     score += device_properties.limits.maxImageDimension2D;
 
-    std::cout << "device: " << device_properties.deviceName << " rate: " << score << std::endl;
+    std::cerr << "device: " << device_properties.deviceName << " rate: " << score << std::endl;
 
     return score;
 }
@@ -179,7 +179,7 @@ QueueFamilyIndices TriangleExampleApp::find_queue_families(VkPhysicalDevice devi
 
     std::vector<VkQueueFamilyProperties> queue_families(queue_family_count);
     vkGetPhysicalDeviceQueueFamilyProperties(device, &queue_family_count, queue_families.data());
-    std::cout << "queue families: " << queue_family_count << std::endl;
+    std::cerr << "queue families: " << queue_family_count << std::endl;
 
     int i = 0;
     for (const auto& queue_family : queue_families) {
