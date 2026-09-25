@@ -7,6 +7,7 @@
 
 #include <cstdlib>
 #include <optional>
+#include <vector>
 
 struct QueueFamilyIndices {
     std::optional<uint32_t> graphics_family;
@@ -15,6 +16,12 @@ struct QueueFamilyIndices {
     bool is_complete() {
         return graphics_family.has_value() && present_family.has_value();
     }
+};
+
+struct SwapChainSupportDetails {
+    VkSurfaceCapabilitiesKHR capabilities;
+    std::vector<VkSurfaceFormatKHR> formats;
+    std::vector<VkPresentModeKHR> present_modes;
 };
 
 class TriangleExampleApp {
@@ -42,8 +49,9 @@ private:
     VkQueue m_presentation_queue;
 
     int rate_device_suitability(VkPhysicalDevice device) const;
-    QueueFamilyIndices find_queue_families(VkPhysicalDevice device) const;
     bool check_device_extension_support(VkPhysicalDevice device) const;
+    QueueFamilyIndices find_queue_families(VkPhysicalDevice device) const;
+    SwapChainSupportDetails query_swap_chain_support(VkPhysicalDevice device) const;
 
     void init_window();
     void init_vulkan();

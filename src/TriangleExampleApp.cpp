@@ -162,6 +162,13 @@ int TriangleExampleApp::rate_device_suitability(VkPhysicalDevice device) const
     }
 
     if (!check_device_extension_support(device)) {
+        std::cerr << "device dont have extension support!" << std::endl;
+        return 0;
+    }
+
+    SwapChainSupportDetails swapChainSupport = query_swap_chain_support(device);
+    if (swapChainSupport.formats.empty() || swapChainSupport.present_modes.empty()) {
+        std::cerr << "device dont have swap chain support!" << std::endl;
         return 0;
     }
 
@@ -199,6 +206,27 @@ bool TriangleExampleApp::check_device_extension_support(VkPhysicalDevice device)
     std::cerr << "TriangleExampleApp::check_device_extension_support()" << std::endl;
 
     return requiredExtensions.empty();
+}
+
+SwapChainSupportDetails TriangleExampleApp::query_swap_chain_support(VkPhysicalDevice device) const
+{
+    SwapChainSupportDetails details;
+
+    uint32_t format_count;
+    vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_surface, &format_count, nullptr);
+    if (format_count != 0) {
+        details.formats.resize(format_count);
+        vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_surface, &format_count, details.formats.data());
+    }
+
+    uint32_t present_mode_count;
+    vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_surface, &present_mode_count, nullptr);
+    if (present_mode_count != 0) {
+        details.present_modes.resize(present_mode_count);
+        vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_surface, &present_mode_count, details.present_modes.data());
+    }
+
+    return details;
 }
 
 QueueFamilyIndices TriangleExampleApp::find_queue_families(VkPhysicalDevice device) const
