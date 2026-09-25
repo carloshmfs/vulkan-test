@@ -161,6 +161,10 @@ int TriangleExampleApp::rate_device_suitability(VkPhysicalDevice device) const
         return 0;
     }
 
+    if (!check_device_extension_support(device)) {
+        return 0;
+    }
+
     // Discrete GPUs have a significant performance advantage
     if (device_properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
         score += 1000;
@@ -172,6 +176,29 @@ int TriangleExampleApp::rate_device_suitability(VkPhysicalDevice device) const
     std::cerr << "device: " << device_properties.deviceName << " rate: " << score << std::endl;
 
     return score;
+}
+
+bool TriangleExampleApp::check_device_extension_support(VkPhysicalDevice device) const
+{
+    const std::vector<const char*> device_extensions = {
+        VK_KHR_SWAPCHAIN_EXTENSION_NAME,
+    };
+
+    uint32_t extensionCount;
+    vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
+
+    std::vector<VkExtensionProperties> availableExtensions(extensionCount);
+    vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, availableExtensions.data());
+
+    std::set<std::string> requiredExtensions(device_extensions.begin(), device_extensions.end());
+
+    for (const auto& extension : availableExtensions) {
+        requiredExtensions.erase(extension.extensionName);
+    }
+
+    std::cerr << "TriangleExampleApp::check_device_extension_support()" << std::endl;
+
+    return requiredExtensions.empty();
 }
 
 QueueFamilyIndices TriangleExampleApp::find_queue_families(VkPhysicalDevice device) const

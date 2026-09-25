@@ -41,6 +41,7 @@ private:
 
     int rate_device_suitability(VkPhysicalDevice device) const;
     QueueFamilyIndices find_queue_families(VkPhysicalDevice device) const;
+    bool check_device_extension_support(VkPhysicalDevice device) const;
 
     void init_window();
     void init_vulkan();
