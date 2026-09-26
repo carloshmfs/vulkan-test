@@ -175,6 +175,13 @@ void TriangleExampleApp::create_swap_chain()
         throw std::runtime_error("failed to create swap chain!");
     }
 
+    vkGetSwapchainImagesKHR(m_device, m_swap_chain, &image_count, nullptr);
+    m_swap_chain_images.resize(image_count);
+    vkGetSwapchainImagesKHR(m_device, m_swap_chain, &image_count, m_swap_chain_images.data());
+
+    m_swap_chain_image_format = surface_format.format;
+    m_swap_chain_extent = extent;
+
     std::cerr << "swap chain created." << std::endl;
 }
 

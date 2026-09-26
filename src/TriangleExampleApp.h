@@ -46,8 +46,11 @@ private:
     VkSurfaceKHR m_surface;
     void create_window_surface();
 
-    void create_swap_chain();
     VkSwapchainKHR m_swap_chain;
+    VkFormat m_swap_chain_image_format;
+    VkExtent2D m_swap_chain_extent;
+    std::vector<VkImage> m_swap_chain_images;
+    void create_swap_chain();
 
     VkQueue m_presentation_queue;
 
