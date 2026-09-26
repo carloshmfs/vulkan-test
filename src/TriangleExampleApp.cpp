@@ -131,6 +131,7 @@ void TriangleExampleApp::create_logical_device()
 
 void TriangleExampleApp::create_swap_chain()
 {
+    std::cerr << "attempting to create swap chain." << std::endl;
     SwapChainSupportDetails swap_chain_support = query_swap_chain_support(m_physical_device);
     VkSurfaceFormatKHR surface_format = choose_swap_surface_format(swap_chain_support.formats);
     VkPresentModeKHR present_mode = choose_swap_present_mode(swap_chain_support.present_modes);
@@ -173,6 +174,8 @@ void TriangleExampleApp::create_swap_chain()
     if (vkCreateSwapchainKHR(m_device, &create_info, nullptr, &m_swap_chain) != VK_SUCCESS) {
         throw std::runtime_error("failed to create swap chain!");
     }
+
+    std::cerr << "swap chain created." << std::endl;
 }
 
 void TriangleExampleApp::pick_physical_device()
@@ -369,6 +372,7 @@ void TriangleExampleApp::main_loop()
 
 void TriangleExampleApp::cleanup()
 {
+    vkDestroySwapchainKHR(m_device, m_swap_chain, nullptr);
     vkDestroyDevice(m_device, nullptr);
     vkDestroySurfaceKHR(m_vk_instance, m_surface, nullptr);
     vkDestroyInstance(m_vk_instance, nullptr);
