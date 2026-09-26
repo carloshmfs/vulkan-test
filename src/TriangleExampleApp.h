@@ -52,6 +52,9 @@ private:
     std::vector<VkImage> m_swap_chain_images;
     void create_swap_chain();
 
+    std::vector<VkImageView> m_swap_chain_image_views;
+    void create_image_views();
+
     VkQueue m_presentation_queue;
 
     int rate_device_suitability(VkPhysicalDevice device) const;

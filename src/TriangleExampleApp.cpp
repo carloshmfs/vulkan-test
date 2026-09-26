@@ -39,6 +39,7 @@ void TriangleExampleApp::init_vulkan()
     pick_physical_device();
     create_logical_device();
     create_swap_chain();
+    create_image_views();
 }
 
 void TriangleExampleApp::create_instance()
@@ -183,6 +184,31 @@ void TriangleExampleApp::create_swap_chain()
     m_swap_chain_extent = extent;
 
     std::cerr << "swap chain created." << std::endl;
+}
+
+void TriangleExampleApp::create_image_views()
+{
+    m_swap_chain_image_views.resize(m_swap_chain_images.size());
+    for (size_t i = 0; i < m_swap_chain_images.size(); i++) {
+        VkImageViewCreateInfo create_info {};
+        create_info.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+        create_info.image = m_swap_chain_images[i];
+        create_info.viewType = VK_IMAGE_VIEW_TYPE_2D;
+        create_info.format = m_swap_chain_image_format;
+        create_info.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+        create_info.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+        create_info.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+        create_info.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+        create_info.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        create_info.subresourceRange.baseMipLevel = 0;
+        create_info.subresourceRange.levelCount = 1;
+        create_info.subresourceRange.baseArrayLayer = 0;
+        create_info.subresourceRange.layerCount = 1;
+
+        if (vkCreateImageView(m_device, &create_info, nullptr, &m_swap_chain_image_views[i]) != VK_SUCCESS) {
+            throw std::runtime_error("failed to create image views!");
+        }
+    }
 }
 
 void TriangleExampleApp::pick_physical_device()
@@ -379,6 +405,9 @@ void TriangleExampleApp::main_loop()
 
 void TriangleExampleApp::cleanup()
 {
+    for (auto image_view : m_swap_chain_image_views) {
+        vkDestroyImageView(m_device, image_view, nullptr);
+    }
     vkDestroySwapchainKHR(m_device, m_swap_chain, nullptr);
     vkDestroyDevice(m_device, nullptr);
     vkDestroySurfaceKHR(m_vk_instance, m_surface, nullptr);
