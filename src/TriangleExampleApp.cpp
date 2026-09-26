@@ -113,7 +113,7 @@ void TriangleExampleApp::create_logical_device()
     create_info.queueCreateInfoCount = static_cast<uint32_t>(queue_create_infos.size());
     create_info.pQueueCreateInfos = queue_create_infos.data();
 
-    std::vector<const char*> enabled_extensions = {
+    const std::vector<const char*> enabled_extensions = {
         VK_KHR_SWAPCHAIN_EXTENSION_NAME
     };
 
