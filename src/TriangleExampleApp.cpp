@@ -261,6 +261,8 @@ SwapChainSupportDetails TriangleExampleApp::query_swap_chain_support(VkPhysicalD
 {
     SwapChainSupportDetails details;
 
+    vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, m_surface, &details.capabilities);
+
     uint32_t format_count;
     vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_surface, &format_count, nullptr);
     if (format_count != 0) {
