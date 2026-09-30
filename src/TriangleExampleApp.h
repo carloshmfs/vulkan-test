@@ -55,6 +55,10 @@ private:
     std::vector<VkImageView> m_swap_chain_image_views;
     void create_image_views();
 
+    VkShaderModule create_shader_module(const std::vector<char>& code);
+
+    void create_graphics_pipeline();
+
     VkQueue m_presentation_queue;
 
     int rate_device_suitability(VkPhysicalDevice device) const;

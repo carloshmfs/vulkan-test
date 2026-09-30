@@ -41,6 +41,7 @@ void TriangleExampleApp::init_vulkan()
     create_logical_device();
     create_swap_chain();
     create_image_views();
+    create_graphics_pipeline();
 }
 
 void TriangleExampleApp::create_instance()
@@ -185,6 +186,49 @@ void TriangleExampleApp::create_swap_chain()
     m_swap_chain_extent = extent;
 
     std::cerr << "swap chain created." << std::endl;
+}
+
+VkShaderModule TriangleExampleApp::create_shader_module(const std::vector<char>& code)
+{
+    VkShaderModuleCreateInfo create_info {};
+    create_info.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+    create_info.codeSize = code.size();
+    create_info.pCode = reinterpret_cast<const uint32_t*>(code.data());
+
+    VkShaderModule shader_module;
+    if (vkCreateShaderModule(m_device, &create_info, nullptr, &shader_module) != VK_SUCCESS) {
+        throw std::runtime_error("failed to create shader module!");
+    }
+
+    return shader_module;
+}
+
+void TriangleExampleApp::create_graphics_pipeline()
+{
+    auto triangle_vert_shader_module = create_shader_module(read_spirv_file("triangle.vert.spv"));
+    auto triangle_frag_shader_module = create_shader_module(read_spirv_file("triangle.frag.spv"));
+
+    VkPipelineShaderStageCreateInfo vert_shader_stage_create_info {};
+    vert_shader_stage_create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+    vert_shader_stage_create_info.stage = VK_SHADER_STAGE_VERTEX_BIT;
+    vert_shader_stage_create_info.module = triangle_vert_shader_module;
+    vert_shader_stage_create_info.pName = "main";
+
+    VkPipelineShaderStageCreateInfo frag_shader_stage_create_info {};
+    frag_shader_stage_create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+    frag_shader_stage_create_info.stage = VK_SHADER_STAGE_VERTEX_BIT;
+    frag_shader_stage_create_info.module = triangle_frag_shader_module;
+    frag_shader_stage_create_info.pName = "main";
+
+    VkPipelineShaderStageCreateInfo shaders_stage_create_info[] = {
+        vert_shader_stage_create_info,
+        frag_shader_stage_create_info
+    };
+
+    (void)shaders_stage_create_info;
+
+    vkDestroyShaderModule(m_device, triangle_vert_shader_module, nullptr);
+    vkDestroyShaderModule(m_device, triangle_frag_shader_module, nullptr);
 }
 
 void TriangleExampleApp::create_image_views()
