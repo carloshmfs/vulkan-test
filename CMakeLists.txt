@@ -62,6 +62,9 @@ add_shaders(
 add_executable(
     ${CMAKE_PROJECT_NAME} 
     src/TriangleExampleApp.cpp
+    src/TriangleExampleApp.h
+    src/helpers.cpp
+    src/helpers.h
     src/main.cpp
 )
 
